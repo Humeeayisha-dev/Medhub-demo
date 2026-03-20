@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedHub — Smart Task Manager for Medical Students</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #4A8B9B;
+    --teal-light: #E0F7FA;
+    --teal-dark: #2d6b7a;
+    --teal-mid: #6BAEBB;
+    --white: #ffffff;
+    --off-white: #f7fafa;
+    --text: #1a2e33;
+    --text-soft: #4a6670;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a2e33 0%, #2d6b7a 50%, #4A8B9B 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(224,247,250,0.08) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(107,174,187,0.1) 0%, transparent 70%);
+    bottom: -50px; left: -50px;
+    border-radius: 50%;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(224,247,250,0.15);
+    border: 1px solid rgba(224,247,250,0.3);
+    color: var(--teal-light);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    animation: fadeDown 0.8s ease forwards;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(48px, 8vw, 96px);
+    color: white;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    animation: fadeDown 0.8s ease 0.1s both;
+  }
+
+  .hero h1 span {
+    color: var(--teal-light);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 22px);
+    color: rgba(224,247,250,0.8);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    font-weight: 300;
+    animation: fadeDown 0.8s ease 0.2s both;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeDown 0.8s ease 0.3s both;
+  }
+
+  .btn-primary {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(74,139,155,0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px rgba(74,139,155,0.5);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--teal-light);
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1.5px solid rgba(224,247,250,0.4);
+    transition: all 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(224,247,250,0.1);
+    transform: translateY(-3px);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(224,247,250,0.5);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-hint::after {
+    content: '↓';
+    font-size: 20px;
+  }
+
+  /* PHONE MOCKUP */
+  .phone-section {
+    background: white;
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+
+  .section-desc {
+    font-size: 17px;
+    color: var(--text-soft);
+    max-width: 520px;
+    margin: 0 auto 60px;
+    line-height: 1.7;
+  }
+
+  .phone-mockup {
+    width: 280px;
+    height: 560px;
+    background: linear-gradient(145deg, #1a2e33, #2d6b7a);
+    border-radius: 40px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 40px 80px rgba(74,139,155,0.3), 0 0 0 8px rgba(74,139,155,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phone-mockup::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 28px;
+    background: #1a2e33;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    width: 260px;
+    height: 520px;
+    background: linear-gradient(180deg, #E0F7FA 0%, #f7fafa 100%);
+    border-radius: 32px;
+    padding: 40px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .app-header {
+    background: var(--teal);
+    border-radius: 16px;
+    padding: 16px;
+    color: white;
+  }
+
+  .app-header-greeting {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+
+  .app-header-name {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .app-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 12px rgba(74,139,155,0.1);
+  }
+
+  .app-card-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--teal);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 10px;
+    color: var(--text);
+  }
+
+  .task-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .task-dot.urgent { background: #ff6b6b; }
+  .task-dot.medium { background: #ffa726; }
+
+  .ai-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: white;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 50px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  /* FEATURES */
+  .features {
+    background: var(--off-white);
+    padding: 80px 20px;
+  }
+
+  .features-grid {
+    max-width: 960px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .feature-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(74,139,155,0.1);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(74,139,155,0.15);
+  }
+
+  .feature-icon {
+    width: 52px; height: 52px;
+    background: var(--teal-light);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .feature-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .feature-desc {
+    font-size: 15px;
+    color: var(--text-soft);
+    line-height: 1.65;
+  }
+
+  /* TECH STACK */
+  .tech {
+    background: white;
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 700px;
+    margin: 40px auto 0;
+  }
+
+  .tech-pill {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(74,139,155,0.2);
+  }
+
+  /* DEMO SECTION */
+  .demo {
+    background: linear-gradient(135deg, #1a2e33 0%, #2d6b7a 100%);
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .demo h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  .demo p {
+    color: rgba(224,247,250,0.8);
+    font-size: 17px;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  /* TEAM */
+  .team {
+    background: var(--off-white);
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .team-info {
+    max-width: 600px;
+    margin: 40px auto 0;
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid rgba(74,139,155,0.1);
+  }
+
+  .team-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .team-detail {
+    font-size: 15px;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+
+  .team-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .team-tag {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #1a2e33;
+    color: rgba(224,247,250,0.6);
+    text-align: center;
+    padding: 32px 20px;
+    font-size: 14px;
+  }
+
+  footer span { color: var(--teal-light); }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Women Techsters Fellowship · Group 4 Capstone</div>
+  <h1>Med<span>Hub</span></h1>
+  <p class="hero-sub">The AI-powered task manager built for medical students. Paste any announcement — let the AI do the rest.</p>
+  <div class="hero-buttons">
+    <a href="https://appetize.io/app/b_5hgjnxp4npgt5lcqok5vu7ymaa" target="_blank" class="btn-primary">▶ Try Live Demo</a>
+    <a href="#features" class="btn-secondary">Learn More</a>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- APP PREVIEW -->
+<section class="phone-section fade-in">
+  <p class="section-label">App Preview</p>
+  <h2 class="section-title">Built for the Medical<br>Student Workflow</h2>
+  <p class="section-desc">14 fully designed screens with a clean teal interface, real-time AI parsing, and smart task management.</p>
+
+  <div class="phone-mockup">
+    <div class="phone-screen">
+      <div class="app-header">
+        <div class="app-header-greeting">Good Morning 👋</div>
+        <div class="app-header-name">Welcome to MedHub</div>
+      </div>
+      <div class="app-card">
+        <div class="ai-badge">✦ AI Insights</div>
+        <div class="app-card-title">Today's Tasks</div>
+        <div class="task-item"><div class="task-dot urgent"></div>Anatomy assignment due Friday</div>
+        <div class="task-item"><div class="task-dot medium"></div>Physiology lecture — Hall B, 10AM</div>
+        <div class="task-item"><div class="task-dot"></div>Clinical posting — Ward 7, Mon</div>
+        <div class="task-item"><div class="task-dot"></div>Case study report — Thu 5PM</div>
+      </div>
+      <div class="app-card">
+        <div class="app-card-title">📢 Parse Announcement</div>
+        <div style="font-size:10px; color:#888; line-height:1.5">Paste any messy announcement text and let AI extract your tasks automatically...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div style="text-align:center" class="fade-in">
+    <p class="section-label">Core Features</p>
+    <h2 class="section-title">Everything a Medical<br>Student Needs</h2>
+    <p class="section-desc">From AI-powered parsing to task tracking — MedHub handles the chaos so you can focus on medicine.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card fade-in">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">AI Announcement Parser</div>
+      <div class="feature-desc">Paste any complex announcement text. Groq AI (llama-3.3-70b) instantly extracts structured tasks with deadlines and priorities.</div>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">✅</div>
+      <div class="feature-title">Smart Task Management</div>
+      <div class="feature-desc">Organize, track, and complete tasks with priority levels and deadlines. Never miss an important submission again.</div>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">👤</div>
+      <div class="feature-title">Personalized Experience</div>
+      <div class="feature-desc">Your name and preferences are saved locally. MedHub greets you personally every time you open the app.</div>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📱</div>
+      <div class="feature-title">14 Beautiful Screens</div>
+      <div class="feature-desc">A complete mobile experience with a consistent teal color scheme, smooth navigation, and clean UI design.</div>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Live Backend</div>
+      <div class="feature-desc">Powered by a Node.js backend deployed on Render, ensuring real-time AI responses and reliable performance.</div>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">Secure by Design</div>
+      <div class="feature-desc">API keys stored securely on the server. All communications encrypted via HTTPS. Your data stays safe.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="tech fade-in">
+  <p class="section-label">Technology</p>
+  <h2 class="section-title">Built With Modern Tech</h2>
+  <p class="section-desc" style="margin:0 auto">A full-stack mobile solution using industry-standard tools and frameworks.</p>
+  <div class="tech-pills">
+    <span class="tech-pill">Flutter (Dart)</span>
+    <span class="tech-pill">Node.js Backend</span>
+    <span class="tech-pill">Groq AI API</span>
+    <span class="tech-pill">llama-3.3-70b</span>
+    <span class="tech-pill">Render (Deployment)</span>
+    <span class="tech-pill">shared_preferences</span>
+    <span class="tech-pill">Provider State Management</span>
+    <span class="tech-pill">GitHub</span>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo fade-in">
+  <h2>Try MedHub Live</h2>
+  <p>Experience the full app in your browser — no download required. Tap to start and explore all 14 screens.</p>
+  <a href="https://appetize.io/app/b_5hgjnxp4npgt5lcqok5vu7ymaa" target="_blank" class="btn-primary">▶ Launch Live Demo</a>
+</section>
+
+<!-- TEAM -->
+<section class="team fade-in">
+  <p class="section-label">The Team</p>
+  <h2 class="section-title">Group 4</h2>
+  <div class="team-info">
+    <div class="team-name">Women Techsters Fellowship 2026</div>
+    <div class="team-detail">Capstone Project · Mobile Application Track</div>
+    <div class="team-detail" style="color: var(--teal); font-weight:500">MedHub — AI-Powered Task Manager for Medical Students</div>
+    <div class="team-tags">
+      <span class="team-tag">Flutter Development</span>
+      <span class="team-tag">AI Integration</span>
+      <span class="team-tag">Backend Engineering</span>
+      <span class="team-tag">UI/UX Design</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Built with 🩵 by <span>Group 4</span> · Women Techsters Fellowship 2026 · MedHub v1.0.0</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
